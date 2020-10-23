@@ -3,11 +3,13 @@ const app = express()
 const hostname = 'localhost'
 const port = 3000
 
+//middleware
 app.use(express.static('public'));
 
-app.get('/simple_webapp', (req, res) => {
-  res.send('Hello World!')
-})
+//routes
+app.use('/route',routes);
+
+
 
 app.listen(port, () => {
   console.log(`Example app listening at http://${hostname}:${port}`)
