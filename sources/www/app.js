@@ -5,7 +5,7 @@ const port = 3002
 
 const router=express.Router()
 
-app.use('/simple_webapp',express.static('public'));
+app.use('/simple_webapp/',express.static('public'));
 
 //middleware that is specific to this router
 router.use(function timeLog(req, res, next) {
@@ -14,7 +14,7 @@ router.use(function timeLog(req, res, next) {
 });
 
 //set route
-router.get('/simple_webapp', function(req, res) {
+router.get('/', function(req, res) {
   res.send('hello world');
 });
 
