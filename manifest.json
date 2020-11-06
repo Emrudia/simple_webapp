@@ -1,10 +1,10 @@
 {
-    "id": "simple_webapp",
-    "name": "SimpleWebapp",
+    "id": "express_routage",
+    "name": "Express_routage",
     "packaging_format": 1,
     "description": {
-        "en": "HelloWorl Test",
-        "fr": "Test du Helloworld"
+        "en": "Express test",
+        "fr": "Test du routage express"
     },
     "version": "1.0~ynh3",
     "url": "https://github.com/Emrudia/simple_webapp",
@@ -39,8 +39,8 @@
                     "en": "Choose a path for your Webapp",
                     "fr": "Choisissez un chemin pour votre Webapp"
                 },
-                "example": "/simple_webapp",
-                "default": "/simple_webapp"
+                "example": "/express_routage",
+                "default": "/express_routage"
             },
             {
                 "name": "is_public",
