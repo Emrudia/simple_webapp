@@ -10,6 +10,13 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
+# INSTALL EXPRESS
+#=================================================
+ynh_print_info --message="Install express"
+
+npm install express
+
+#=================================================
 # MANAGE SCRIPT FAILURE
 #=================================================
 ynh_print_info --message="Managing script failure..."
