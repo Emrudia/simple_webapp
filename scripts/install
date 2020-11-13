@@ -85,7 +85,7 @@ ynh_use_nodejs
 #=================================================
 ynh_print_info --message="Install express"
 
-ynh_npm install express
+#ynh_npm install express
 
 #=================================================
 # CREATE A MYSQL DATABASE
