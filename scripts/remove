@@ -17,11 +17,10 @@ ynh_script_progression --message="Loading installation settings..." --weight=2
 app=$YNH_APP_INSTANCE_NAME
 
 domain=$(ynh_app_setting_get --app=$app --key=domain)
-with_mysql=$(ynh_app_setting_get --app=$app --key=with_mysql)
-with_sftp=$(ynh_app_setting_get --app=$app --key=with_sftp)
 
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
-db_user=$db_name
+db_user=$(ynh_app_setting_get --app=$app --key=db_user)
+
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 
 #=================================================
@@ -35,15 +34,14 @@ ynh_remove_systemd_config
 #=================================================
 # STANDARD REMOVE
 #=================================================
-# REMOVE THE MYSQL DATABASE
+# REMOVE THE POSTGRESQL DATABASE
 #=================================================
 
-if [ $with_mysql -eq 1 ]; then
-    ynh_script_progression --message="Removing the MySQL database..." --weight=2
+ynh_script_progression --message="Removing the POSTGRESQL database..." --weight=2
 
-    # Remove a database if it exists, along with the associated user
-    ynh_mysql_remove_db --db_user=$db_user --db_name=$db_name
-fi
+# Remove a database along with the associated user
+ynh_psql_remove_db --db_user=$db_user --db_name=$db_name
+
 
 #=================================================
 # REMOVE APP MAIN DIR
@@ -71,18 +69,6 @@ ynh_print_info --message="Removing dependencies..."
 ynh_remove_app_dependencies
 ynh_remove_nodejs
 
-#=================================================
-# SPECIFIC REMOVE
-#=================================================
-# REMOVE THE CUSTOM SSH CONFIG
-#=================================================
-
-if [ $with_sftp -eq 1 ]
-then
-    ynh_script_progression --message="Removing the custom ssh config..."
-    ynh_secure_remove --file="/usr/share/yunohost/hooks/conf_regen/90-ssh_$app"
-    yunohost tools regen-conf ssh
-fi
 
 #=================================================
 # GENERIC FINALIZATION

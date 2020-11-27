@@ -30,7 +30,8 @@ domain=$YNH_APP_ARG_DOMAIN
 path_url=$YNH_APP_ARG_PATH
 is_public=$YNH_APP_ARG_IS_PUBLIC
 
-with_mysql=$YNH_APP_ARG_WITH_MYSQL
+db_name=$YNH_APP_ARG_DOMAIN
+db_user=$YNH_APP_ARG_DOMAIN
 
 app=$YNH_APP_INSTANCE_NAME
 app_nb=$YNH_APP_INSTANCE_NUMBER
@@ -54,8 +55,11 @@ ynh_script_progression --message="Storing installation settings..."
 ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
 ynh_app_setting_set --app=$app --key=is_public --value=$is_public
-ynh_app_setting_set --app=$app --key=with_mysql --value=$with_mysql
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path
+
+
+ynh_app_setting_set --app=$app --key=db_name --value=$db_name
+ynh_app_setting_set --app=$app --key=db_user --value=$db_user
 
 ynh_app_setting_set --app=$app --key=overwrite_nginx --value=0
 ynh_app_setting_set --app=$app --key=overwrite_phpfpm --value=1
@@ -81,17 +85,43 @@ ynh_install_nodejs --nodejs_version="12.16.3"
 ynh_use_nodejs
 
 #=================================================
-# CREATE A MYSQL DATABASE
+# CREATE A POSTGRESQL DATABASE
 #=================================================
 
-if [ $with_mysql -eq 1 ]
-then
-    ynh_script_progression --message="Creating a MySQL database..." --weight=2
+ynh_script_progression --message="Creating Postgresql database..."
 
-    db_name=$(ynh_sanitize_dbid --db_name=$app)
-    ynh_app_setting_set --app=$app --key=db_name --value=$db_name
-    ynh_mysql_setup_db --db_user=$db_name --db_name=$db_name
-fi
+ynh_psql_setup_db --db_user=$db_user --db_name=$db_name
+
+ynh_psql_execute_as_root \
+    --sql "CREATE TABLE IF NOT EXISTS projects (
+		  id INTEGER PRIMARY KEY,
+		  name text NOT NULL CHECK (name <> ''),
+		  priority integer ,
+		  description text,
+		  deliverydate date
+		);
+		CREATE TABLE IF NOT EXISTS users (
+		  id BigInt PRIMARY KEY ,
+		  name text NOT NULL,
+		  login text NOT NULL ,
+		  gitToken text,
+		  job text ,
+		  mastodon text,
+		  gitUsername text,
+		  email text,
+		  location text,
+		  school text,
+		  nbfollowers INTEGER,
+		  listoffollow JSON[],
+		  projectid INTEGER[],
+		  picture text,
+		  hashedPassword text,
+		  currentProject JSON,
+		  requests JSON[],
+		  company text
+
+		);"
+
 
 #=================================================
 # NGINX CONFIGURATION

@@ -27,9 +27,7 @@ domain=$(ynh_app_setting_get --app=$app --key=domain)
 path_url=$(ynh_app_setting_get --app=$app --key=path)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
-with_mysql=$(ynh_app_setting_get --app=$app --key=with_mysql)
-with_sftp=$(ynh_app_setting_get --app=$app --key=with_sftp)
-password=$(ynh_app_setting_get --app=$app --key=password)
+db_user=$(ynh_app_setting_get --app=$app --key=db_user)
 
 #=================================================
 # CHECK IF THE APP CAN BE RESTORED
@@ -57,16 +55,13 @@ ynh_script_progression --message="Restoring the app main directory..."
 ynh_restore_file --origin_path="$final_path"
 
 #=================================================
-# RESTORE THE MYSQL DATABASE
+# RESTORE THE POSTGRESQL DATABASE
 #=================================================
+ynh_script_progression --message="Restoring the POSTGRESQL database..."
 
-if [ $with_mysql -eq 1 ]; then
-    ynh_script_progression --message="Restoring the MySQL database..."
-
-    db_pwd=$(ynh_app_setting_get --app=$app --key=mysqlpwd)
-    ynh_mysql_setup_db --db_user=$db_name --db_name=$db_name --db_pwd=$db_pwd
-    ynh_mysql_connect_as --user=$db_name --password=$db_pwd --database=$db_name < ./db.sql
-fi
+db_pwd=$(ynh_app_setting_get --app=$app --key=mysqlpwd)
+ynh_psql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
+ynh_psql_connect_as --user=$db_user --password=$db_pwd --database=$db_name < ./db.sql
 
 #=================================================
 # RECREATE THE DEDICATED USER
@@ -96,21 +91,6 @@ chown root: "$final_path"
 #=================================================
 
 ynh_restore_file --origin_path="/etc/php/7.0/fpm/pool.d/$app.conf"
-
-#=================================================
-# SPECIFIC RESTORATION
-#=================================================
-# CONFIGURE SSH
-#=================================================
-
-if [ $with_sftp -eq 1 ]
-then
-    ynh_script_progression --message="Configuring ssh..."
-
-    ynh_restore_file "/usr/share/yunohost/hooks/conf_regen/90-ssh_$app"
-
-    yunohost tools regen-conf ssh
-fi
 
 #=================================================
 # GENERIC FINALIZATION
