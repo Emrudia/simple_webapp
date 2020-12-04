@@ -30,8 +30,8 @@ domain=$YNH_APP_ARG_DOMAIN
 path_url=$YNH_APP_ARG_PATH
 is_public=$YNH_APP_ARG_IS_PUBLIC
 
-db_name=$YNH_APP_ARG_DOMAIN
-db_user=$YNH_APP_ARG_DOMAIN
+db_name=$YNH_APP_ARG_DB_NAME
+db_user=$YNH_APP_ARG_DB_USER
 
 app=$YNH_APP_INSTANCE_NAME
 app_nb=$YNH_APP_INSTANCE_NUMBER
@@ -89,6 +89,8 @@ ynh_use_nodejs
 #=================================================
 
 ynh_script_progression --message="Creating Postgresql database..."
+
+ynh_psql_test_if_first_run
 
 ynh_psql_setup_db --db_user=$db_user --db_name=$db_name
 
