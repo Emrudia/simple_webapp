@@ -20,9 +20,6 @@ domain=$(ynh_app_setting_get --app=$app --key=domain)
 path_url=$(ynh_app_setting_get --app=$app --key=path)
 is_public=$(ynh_app_setting_get --app=$app --key=is_public)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-db_name=$(ynh_app_setting_get --app=$app --key=db_name)
-with_mysql=$(ynh_app_setting_get --app=$app --key=with_mysql)
-with_sftp=$(ynh_app_setting_get --app=$app --key=with_sftp)
 password=$(ynh_app_setting_get --app=$app --key=password)
 
 overwrite_nginx=$(ynh_app_setting_get --app=$app --key=overwrite_nginx)
@@ -59,11 +56,6 @@ then
     ynh_app_setting_delete --app=$app --key=user
 fi
 
-# If db_name doesn't exist, create it
-if [ -z "$db_name" ]; then
-	db_name=$(ynh_sanitize_dbid --db_name=$app)
-	ynh_app_setting_set --app=$app --key=db_name --value=$db_name
-fi
 
 # If final_path doesn't exist, create it
 if [ -z "$final_path" ]; then
@@ -99,12 +91,6 @@ fi
 if [ -z "$fpm_usage" ]; then
 	fpm_usage=low
 	ynh_app_setting_set --app=$app --key=fpm_usage --value=$fpm_usage
-fi
-
-# If with_sftp doesn't exist, create it
-if [ -z "$with_sftp" ]; then
-	with_sftp=1
-	ynh_app_setting_set --app=$app --key=with_sftp --value=$with_sftp
 fi
 
 #=================================================
