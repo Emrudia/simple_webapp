@@ -19,7 +19,7 @@ app.use(cookieParser());
 app.use('/express_routage',express.static(path.join(__dirname, 'public')));
 
 
-//app.use('/express_routage/',wikiRouter);
+app.use('/express_routage/wiki',wikiRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
